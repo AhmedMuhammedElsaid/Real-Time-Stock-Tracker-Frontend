@@ -3,6 +3,7 @@ import { useStockContext } from '../../../providers/StockProvider';
 import { fetchStockList } from '../../../api/api';
 import { StockCard } from './StockCard';
 import { useNavigate } from 'react-router-dom';
+import { Skeleton } from '../../../components/common/Skeleton';
 import '../styles/StockList.css';
 
 export const StockList: React.FC = () => {
@@ -36,10 +37,6 @@ export const StockList: React.FC = () => {
 
     loadStocks();
 
-    // Cleanup: unsubscribe from all when unmounting (optional, or persist)
-    // If we navigate to Detail, we might want to unsubscribe from others to save bandwidth?
-    // Requirement says "Screen displays all available stocks...".
-    // For now, we subscribe on mount. If we return from detail, we need to resubscribe.
     return () => {
       // unsubscribe(Object.keys(stocks)); // Optional cleanup
     };
@@ -49,7 +46,22 @@ export const StockList: React.FC = () => {
     navigate(`/stocks/${symbol}`);
   };
 
-  if (loading) return <div className="loading">Loading stocks...</div>;
+  if (loading) {
+    return (
+      <div className="stock-grid">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="stock-card skeleton-card">
+            <div className="stock-info">
+              <Skeleton width="60px" height="24px" style={{ marginBottom: '8px' }} />
+              <Skeleton width="120px" height="16px" />
+            </div>
+            <Skeleton width="80px" height="32px" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   if (error) return <div className="error">{error}</div>;
 
   return (

@@ -4,6 +4,7 @@ import { useStockContext } from '../../../providers/StockProvider';
 import { fetchStockHistory } from '../../../api/api';
 import { ErrorBoundary } from '../../../components/common/ErrorBoundary';
 import { getTime } from '../../../utils/utils';
+import { Skeleton } from '../../../components/common/Skeleton';
 import Fallback from '../../../components/common/Fallback';
 
 interface StockChartProps {
@@ -67,10 +68,38 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
     return history;
   }, [history, currentPrice, lastUpdated]);
 
-  if (loading) return <div>Loading chart...</div>;
+  if (loading) {
+    return (
+      <div style={{ width: '100%', height: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <Skeleton width="100%" height="100%" borderRadius="12px" />
+      </div>
+    );
+  }
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{
+          backgroundColor: 'var(--bg-card)',
+          padding: '12px 16px',
+          border: '1px solid var(--border)',
+          borderRadius: '8px',
+          boxShadow: 'var(--shadow-md)'
+        }}>
+          <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+            {payload[0].payload.displayTime}
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: '1.125rem', fontWeight: 800, color: 'var(--text-main)' }}>
+            ${payload[0].value.toFixed(2)}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div style={{ width: '100%', height: 400 }}>
+    <div style={{ width: '100%', height: 400, marginTop: 24 }}>
       <ErrorBoundary
         name="StockChart"
         fallback={<Fallback/>}
@@ -79,27 +108,37 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
           <AreaChart data={chartData}>
             <defs>
               <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3182ce" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#3182ce" stopOpacity={0} />
+                <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
             <XAxis
               dataKey="displayTime"
-              minTickGap={30}
+              minTickGap={60}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: 'var(--text-muted)', fontSize: 12, fontWeight: 500 }}
+              dy={10}
             />
             <YAxis
               domain={['auto', 'auto']}
-              tickFormatter={(val) => `$${val.toFixed(2)}`}
+              orientation="right"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: 'var(--text-muted)', fontSize: 12, fontWeight: 500 }}
+              tickFormatter={(val) => `$${val.toFixed(0)}`}
             />
-            <Tooltip />
+            <Tooltip content={<CustomTooltip />} />
             <Area
               type="monotone"
               dataKey="price"
-              stroke="#3182ce"
+              stroke="var(--primary)"
+              strokeWidth={3}
               fillOpacity={1}
               fill="url(#colorPrice)"
-              isAnimationActive={false}
+              isAnimationActive={true}
+              animationDuration={800}
             />
           </AreaChart>
         </ResponsiveContainer>
