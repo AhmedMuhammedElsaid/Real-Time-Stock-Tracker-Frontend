@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import './ErrorBoundary.css';
+import ReloadButton from '../ReloadButton/ReloadButton';
 
 
 interface Props {
@@ -37,12 +38,7 @@ export default class ErrorBoundary extends Component<Props, State> {
         <div className="error-boundary-fallback">
           <h2>Something went wrong.</h2>
           <p>We encountered an error while rendering this component.</p>
-          <button 
-            className="error-boundary-reload-btn"
-            onClick={() => window.location.reload()}
-          >
-            Reload Page
-          </button>
+          <ReloadButton />
         </div>
       );
     }

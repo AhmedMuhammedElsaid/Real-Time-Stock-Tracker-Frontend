@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useStockContext } from '../../../providers/StockProvider';
 import { fetchStockList } from '../../../api/api';
 import { StockCard } from './StockCard';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '../../../components/common/Skeleton';
-import '../styles/StockList.css';
 import { useVirtualGrid } from '../../../hooks/useVirtualGrid';
+import '../styles/StockList.css';
+import ReloadButton from '../../../components/common/ReloadButton/ReloadButton';
 
 export const StockList: React.FC = () => {
   const { stocks, setInitialStocks, subscribe } = useStockContext();
@@ -18,37 +19,35 @@ export const StockList: React.FC = () => {
   const { containerRef, visibleItems, totalHeight } = useVirtualGrid({
     itemCount: stockArray.length,
     itemMinWidth: 280,
-    itemHeight: 110, // Approximate height of StockCard including padding
+    itemHeight: 110,
     gap: 24,
     buffer: 4
   });
 
-  useEffect(() => {
-    const loadStocks = async () => {
-      const hasStocks = Object.keys(stocks).length > 0;
+  const loadStocks = useCallback(async () => {
+    const hasStocks = Object.keys(stocks).length > 0;
+    
+    setError(null);
+    if (!hasStocks) {
+      setLoading(true);
+    }
 
+    try {
+      const list = await fetchStockList();
+      setInitialStocks(list);
+      subscribe(list.map(s => s.symbol));
+      setLoading(false);
+    } catch (err) {
       if (!hasStocks) {
-        setLoading(true);
-      }
-
-      try {
-        const list = await fetchStockList();
-        setInitialStocks(list);
-
-        // Subscribe to all symbols
-        subscribe(list.map(s => s.symbol));
+        setError('Failed to load stocks. Please ensure backend is running.');
         setLoading(false);
-      } catch (err) {
-        if (!hasStocks) {
-          setError('Failed to load stocks. Please ensure backend is running.');
-          setLoading(false);
-        }
       }
-    };
+    }
+  }, [stocks]);
 
+  useEffect(() => {
     loadStocks();
-
-  }, [setInitialStocks, subscribe]);
+  }, [loadStocks]);
 
   const handleStockClick = (symbol: string) => navigate(`/stocks/${symbol}`);
 
@@ -69,7 +68,10 @@ export const StockList: React.FC = () => {
     );
   }
 
-  if (error) return <div className="error">{error}</div>;
+  if (error) return <div className="error">
+    <p>{error}</p>
+    <ReloadButton onClick={loadStocks} label="Retry" />
+  </div>;
 
   return (
     <div className="stock-grid" ref={containerRef} style={{ height: totalHeight }}>
