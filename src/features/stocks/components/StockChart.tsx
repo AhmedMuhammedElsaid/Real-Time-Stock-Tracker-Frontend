@@ -5,7 +5,7 @@ import { fetchStockHistory } from '../../../api/api';
 import { ErrorBoundary } from '../../../components/common/ErrorBoundary/ErrorBoundary';
 import { getTime } from '../../../utils/utils';
 import { Skeleton } from '../../../components/common/Skeleton';
-import Fallback from '../../../components/common/Fallback';
+import Fallback from '../../../components/common/Fallback/Fallback';
 
 interface StockChartProps {
   symbol: string;

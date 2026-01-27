@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useStockContext } from '../../providers/StockProvider';
+import { useStockContext } from '../../../providers/StockProvider';
 import { Landmark, Activity } from 'lucide-react';
 
 import './Header.css';

@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useStockContext } from '../../../providers/StockProvider';
 import { StockChart } from '../components/StockChart';
 import { Helmet } from 'react-helmet-async';
-import { Header } from '../../../components/common/Header';
+import { Header } from '../../../components/common/Header/Header';
 import './StockDetail.css';
 
 export default function StockDetail() {
