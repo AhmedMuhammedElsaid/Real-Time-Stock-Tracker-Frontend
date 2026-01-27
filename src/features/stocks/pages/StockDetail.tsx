@@ -10,9 +10,9 @@ export default function StockDetail() {
   const { symbol } = useParams<{ symbol: string }>();
   const { stocks, subscribe, unsubscribe } = useStockContext();
   const stock = symbol ? stocks[symbol] : undefined;
-  
+
   const pageTitle = stock ? `${stock.name} (${stock.symbol}) | Real-Time Stock Analysis` : 'Stock Analysis';
-  const pageDescription = stock 
+  const pageDescription = stock
     ? `Live stock price updates and historical charts for ${stock.name} (${stock.symbol}). Analyze market trends and stay informed.`
     : 'Analyze stock market trends with professional real-time charts.';
 
@@ -29,7 +29,7 @@ export default function StockDetail() {
     return (
       <>
         <Header />
-      <main className="layout-container compact">
+        <main className="layout-container compact">
           <Helmet>
             <title>Loading Stock Details...</title>
           </Helmet>
@@ -47,22 +47,22 @@ export default function StockDetail() {
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
       </Helmet>
-      
+
       <Header />
 
       <main className="layout-container compact">
         <div className="detail-header">
-        <Link to="/" className="back-link">← Back to Dashboard</Link>
-        <h1>{stock.name} ({stock.symbol})</h1>
-        <p className="detail-price">
-          Current Price: <span>${stock.price?.toFixed(2)}</span>
-        </p>
-      </div>
+          <Link to="/" className="back-link">← Back to Dashboard</Link>
+          <h1>{stock.name} ({stock.symbol})</h1>
+          <p className="detail-price">
+            Current Price: <span>${stock.price?.toFixed(2)}</span>
+          </p>
+        </div>
 
-      <div className="chart-container">
-        <StockChart symbol={stock.symbol} />
-      </div>
-    </main>
+        <div className="chart-container">
+          <StockChart symbol={stock.symbol} />
+        </div>
+      </main>
     </>
   );
 };
