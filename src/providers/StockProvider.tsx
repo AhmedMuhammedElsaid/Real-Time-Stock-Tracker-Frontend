@@ -59,7 +59,7 @@ interface StockContextType extends StockState {
 
 const StockContext = createContext<StockContextType | undefined>(undefined);
 
-export function StockProvider({ children }: { children: React.ReactNode }) {
+export default function StockProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(stockReducer, initialState);
   const { status, send, registerMessageHandler } = useWebSocket();
 

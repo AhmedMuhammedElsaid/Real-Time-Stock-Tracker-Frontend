@@ -2,7 +2,9 @@ import { StockList } from '../components/StockList';
 import { Helmet } from 'react-helmet-async';
 import { Header } from '../../../components/common/Header';
 
-export const Dashboard: React.FC = () => {
+import './Dashboard.css';
+
+export default function Dashboard() {
   return (
     <>
       <Helmet>
@@ -12,12 +14,12 @@ export const Dashboard: React.FC = () => {
       
       <Header />
 
-      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px' }}>
-        <header style={{ marginBottom: 40 }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)' }}>
+      <main className="layout-container">
+        <header className="dashboard-header">
+          <h1 className="dashboard-title">
             Market Overview
           </h1>
-          <p style={{ color: 'var(--text-muted)', marginTop: 8, fontSize: '1.125rem' }}>
+          <p className="dashboard-subtitle">
             Real-time insights into your watched symbols.
           </p>
         </header>

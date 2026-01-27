@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet-async';
 import { Header } from '../../../components/common/Header';
 import './StockDetail.css';
 
-export const StockDetail: React.FC = () => {
+export default function StockDetail() {
   const { symbol } = useParams<{ symbol: string }>();
   const { stocks, subscribe, unsubscribe } = useStockContext();
   const stock = symbol ? stocks[symbol] : undefined;
@@ -29,11 +29,11 @@ export const StockDetail: React.FC = () => {
     return (
       <>
         <Header />
-        <main className="stock-detail-page">
+      <main className="layout-container compact">
           <Helmet>
             <title>Loading Stock Details...</title>
           </Helmet>
-          <div style={{ maxWidth: 1200, margin: '40px auto', padding: '0 24px' }}>
+          <div className="layout-container">
             <p className="detail-loading">Stock not found or loading...</p>
           </div>
         </main>
@@ -50,8 +50,8 @@ export const StockDetail: React.FC = () => {
       
       <Header />
 
-      <main className="stock-detail-page" style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px' }}>
-        <div className="detail-header" style={{ marginBottom: 40 }}>
+      <main className="layout-container compact">
+        <div className="detail-header">
         <Link to="/" className="back-link">← Back to Dashboard</Link>
         <h1>{stock.name} ({stock.symbol})</h1>
         <p className="detail-price">

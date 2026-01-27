@@ -1,4 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import './ErrorBoundary.css';
+
 
 interface Props {
   children?: ReactNode;
@@ -11,7 +13,8 @@ interface State {
   error?: Error;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+
+export default class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false
   };
@@ -31,28 +34,12 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div style={{
-          padding: '2rem',
-          margin: '1rem',
-          border: '1px solid #feb2b2',
-          borderRadius: '8px',
-          backgroundColor: '#fff5f5',
-          color: '#c53030',
-          textAlign: 'center'
-        }}>
+        <div className="error-boundary-fallback">
           <h2>Something went wrong.</h2>
           <p>We encountered an error while rendering this component.</p>
           <button 
+            className="error-boundary-reload-btn"
             onClick={() => window.location.reload()}
-            style={{
-              marginTop: '1rem',
-              padding: '0.5rem 1rem',
-              backgroundColor: '#c53030',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
           >
             Reload Page
           </button>

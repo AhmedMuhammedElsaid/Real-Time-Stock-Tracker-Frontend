@@ -95,3 +95,13 @@ button {
   position: relative;
   animation: shimmer 1s linear infinite forwards;
 }
+
+.layout-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.layout-container.compact {
+  padding-top: 0;
+}

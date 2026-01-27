@@ -52,7 +52,7 @@ export const StockList: React.FC = () => {
         {[...Array(8)].map((_, i) => (
           <div key={i} className="stock-card skeleton-card">
             <div className="stock-info">
-              <Skeleton width="60px" height="24px" style={{ marginBottom: '8px' }} />
+              <Skeleton width="60px" height="24px" />
               <Skeleton width="120px" height="16px" />
             </div>
             <Skeleton width="80px" height="32px" />

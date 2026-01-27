@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStockContext } from '../../../providers/StockProvider';
 import { fetchStockHistory } from '../../../api/api';
-import { ErrorBoundary } from '../../../components/common/ErrorBoundary';
+import { ErrorBoundary } from '../../../components/common/ErrorBoundary/ErrorBoundary';
 import { getTime } from '../../../utils/utils';
 import { Skeleton } from '../../../components/common/Skeleton';
 import Fallback from '../../../components/common/Fallback';
@@ -16,6 +16,8 @@ interface ChartData {
   displayTime: string;
   price: number;
 }
+
+import './StockChart.css';
 
 export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
   const { stocks } = useStockContext();
@@ -70,7 +72,7 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
 
   if (loading) {
     return (
-      <div style={{ width: '100%', height: 400, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="chart-loading-container">
         <Skeleton width="100%" height="100%" borderRadius="12px" />
       </div>
     );
@@ -79,17 +81,11 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div style={{
-          backgroundColor: 'var(--bg-card)',
-          padding: '12px 16px',
-          border: '1px solid var(--border)',
-          borderRadius: '8px',
-          boxShadow: 'var(--shadow-md)'
-        }}>
-          <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+        <div className="custom-tooltip">
+          <p className="tooltip-time">
             {payload[0].payload.displayTime}
           </p>
-          <p style={{ margin: '4px 0 0', fontSize: '1.125rem', fontWeight: 800, color: 'var(--text-main)' }}>
+          <p className="tooltip-price">
             ${payload[0].value.toFixed(2)}
           </p>
         </div>
@@ -99,7 +95,7 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
   };
 
   return (
-    <div style={{ width: '100%', height: 400, marginTop: 24 }}>
+    <div className="chart-outer-container">
       <ErrorBoundary
         name="StockChart"
         fallback={<Fallback/>}

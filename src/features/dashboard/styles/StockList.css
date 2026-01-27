@@ -14,3 +14,7 @@
   border: 1px solid #fed7d7;
   font-weight: 500;
 }
+
+.skeleton-card .stock-info .skeleton:first-child {
+  margin-bottom: 8px;
+}
