@@ -104,7 +104,7 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
         name="StockChart"
         fallback={<Fallback/>}
       >
-        <ResponsiveContainer>
+        <ResponsiveContainer minWidth={0} minHeight={0}>
           <AreaChart data={chartData}>
             <defs>
               <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">

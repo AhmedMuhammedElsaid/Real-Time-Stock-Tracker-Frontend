@@ -9,17 +9,23 @@ export function useWebSocket() {
   const [status, setStatus] = useState<ConnectionStatus>('disconnected');
   const ws = useRef<WebSocket | null>(null);
   const messageHandler = useRef<((data: any) => void) | null>(null);
+  const isComponentMounted = useRef(true);
   const reconnectCount = useRef(0);
   const subscriptions = useRef<Set<string>>(new Set());
 
   const connect = useCallback(() => {
     if (ws.current?.readyState === WebSocket.OPEN || ws.current?.readyState === WebSocket.CONNECTING) return;
+    if (!isComponentMounted.current) return;
 
     setStatus('connecting');
     const socket = new WebSocket(WS_URL);
     ws.current = socket;
 
     socket.onopen = () => {
+      if (!isComponentMounted.current) {
+        socket.close();
+        return;
+      }
       setStatus('connected');
       reconnectCount.current = 0;
       console.log('WebSocket Connected');
@@ -33,22 +39,30 @@ export function useWebSocket() {
     };
 
     socket.onclose = () => {
+      if (!isComponentMounted.current) return;
+
       setStatus('disconnected');
       const delay = Math.min(
         INITIAL_RECONNECT_INTERVAL * Math.pow(2, reconnectCount.current),
         MAX_RECONNECT_INTERVAL
       );
       console.log(`WebSocket Disconnected, retrying in ${delay}ms...`);
-      setTimeout(connect, delay);
+      setTimeout(() => {
+        if (isComponentMounted.current) {
+          connect();
+        }
+      }, delay);
       reconnectCount.current++;
     };
 
     socket.onerror = (error) => {
+      if (!isComponentMounted.current) return;
       console.error('WebSocket Error:', error);
       setStatus('error');
     };
 
     socket.onmessage = (event) => {
+      if (!isComponentMounted.current) return;
       try {
         const data = JSON.parse(event.data);
         if (messageHandler.current) {
@@ -61,9 +75,16 @@ export function useWebSocket() {
   }, []);
 
   useEffect(() => {
+    isComponentMounted.current = true;
     connect();
     return () => {
+      isComponentMounted.current = false;
       if (ws.current) {
+        // Clear listeners to prevent logs during unmount closure
+        ws.current.onopen = null;
+        ws.current.onclose = null;
+        ws.current.onerror = null;
+        ws.current.onmessage = null;
         ws.current.close();
       }
     };
