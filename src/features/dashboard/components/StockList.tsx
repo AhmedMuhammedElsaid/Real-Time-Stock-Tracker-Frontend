@@ -26,7 +26,7 @@ export const StockList: React.FC = () => {
   useEffect(() => {
     const loadStocks = async () => {
       const hasStocks = Object.keys(stocks).length > 0;
-      
+
       if (!hasStocks) {
         setLoading(true);
       }
@@ -34,7 +34,7 @@ export const StockList: React.FC = () => {
       try {
         const list = await fetchStockList();
         setInitialStocks(list);
-        
+
         // Subscribe to all symbols
         subscribe(list.map(s => s.symbol));
         setLoading(false);
@@ -48,14 +48,10 @@ export const StockList: React.FC = () => {
 
     loadStocks();
 
-    return () => {
-      // unsubscribe(Object.keys(stocks)); // Optional cleanup
-    };
-  }, [setInitialStocks, subscribe]); // removed unsubscribe/stocks from deps to avoid loops
+  }, [setInitialStocks, subscribe]);
 
-  const handleStockClick = (symbol: string) => {
-    navigate(`/stocks/${symbol}`);
-  };
+  const handleStockClick = (symbol: string) => navigate(`/stocks/${symbol}`);
+
 
   if (loading) {
     return (
@@ -81,8 +77,8 @@ export const StockList: React.FC = () => {
         const stock = stockArray[index];
         return (
           <div key={stock.symbol} className="virtual-item" style={style}>
-            <StockCard 
-              stock={stock} 
+            <StockCard
+              stock={stock}
               onClick={handleStockClick}
             />
           </div>

@@ -25,6 +25,17 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
+vi.mock('../../../hooks/useVirtualGrid', () => ({
+  useVirtualGrid: vi.fn((config) => ({
+    containerRef: () => {},
+    visibleItems: Array.from({ length: config.itemCount }).map((_, i) => ({
+      index: i,
+      style: {}
+    })),
+    totalHeight: config.itemCount * config.itemHeight
+  }))
+}));
+
 describe('StockList Component', () => {
   const mockStocks = {
     'AAPL': { symbol: 'AAPL', name: 'Apple Inc', price: 150.00 },

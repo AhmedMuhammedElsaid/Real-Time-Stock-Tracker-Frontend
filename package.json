@@ -3,6 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": {
+    "name": "Ahmed Muhammed Elsaid",
+    "email": "ahmed.muhammed.elsaid@gmail.com",
+    "url": "https://github.com/AhmedMuhammedElsaid",
+    "license": "MIT"
+  },
+  "description": "A React application for stock market analysis",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
