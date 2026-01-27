@@ -1,10 +1,9 @@
 import { StockList } from '../components/StockList';
 import { Helmet } from 'react-helmet-async';
 import { Header } from '../../../components/common/Header/Header';
+import '../styles/Dashboard.css';
 
-import './Dashboard.css';
-
-export default function Dashboard() {
+export const Dashboard: React.FC = () => {
   return (
     <>
       <Helmet>
@@ -28,3 +27,5 @@ export default function Dashboard() {
     </>
   );
 };
+
+export default Dashboard;

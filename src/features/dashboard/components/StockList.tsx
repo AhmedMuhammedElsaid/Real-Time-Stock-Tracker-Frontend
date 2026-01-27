@@ -1,16 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useStockContext } from '../../../providers/StockProvider';
 import { fetchStockList } from '../../../api/api';
 import { StockCard } from './StockCard';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '../../../components/common/Skeleton';
 import '../styles/StockList.css';
+import { useVirtualGrid } from '../../../hooks/useVirtualGrid';
 
 export const StockList: React.FC = () => {
   const { stocks, setInitialStocks, subscribe } = useStockContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const stockArray = useMemo(() => Object.values(stocks), [stocks]);
+
+  const { containerRef, visibleItems, totalHeight } = useVirtualGrid({
+    itemCount: stockArray.length,
+    itemMinWidth: 280,
+    itemHeight: 110, // Approximate height of StockCard including padding
+    gap: 24,
+    buffer: 4
+  });
 
   useEffect(() => {
     const loadStocks = async () => {
@@ -48,7 +59,7 @@ export const StockList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="stock-grid">
+      <div className="stock-grid-static">
         {[...Array(8)].map((_, i) => (
           <div key={i} className="stock-card skeleton-card">
             <div className="stock-info">
@@ -65,14 +76,18 @@ export const StockList: React.FC = () => {
   if (error) return <div className="error">{error}</div>;
 
   return (
-    <div className="stock-grid">
-      {Object.values(stocks).map(stock => (
-        <StockCard 
-          key={stock.symbol} 
-          stock={stock} 
-          onClick={handleStockClick}
-        />
-      ))}
+    <div className="stock-grid" ref={containerRef} style={{ height: totalHeight }}>
+      {visibleItems.map(({ index, style }) => {
+        const stock = stockArray[index];
+        return (
+          <div key={stock.symbol} className="virtual-item" style={style}>
+            <StockCard 
+              stock={stock} 
+              onClick={handleStockClick}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

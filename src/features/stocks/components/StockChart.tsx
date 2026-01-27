@@ -2,10 +2,11 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStockContext } from '../../../providers/StockProvider';
 import { fetchStockHistory } from '../../../api/api';
-import { ErrorBoundary } from '../../../components/common/ErrorBoundary/ErrorBoundary';
+import ErrorBoundary  from '../../../components/common/ErrorBoundary/ErrorBoundary';
 import { getTime } from '../../../utils/utils';
 import { Skeleton } from '../../../components/common/Skeleton';
 import Fallback from '../../../components/common/Fallback/Fallback';
+import '../styles/StockChart.css';
 
 interface StockChartProps {
   symbol: string;
@@ -16,8 +17,6 @@ interface ChartData {
   displayTime: string;
   price: number;
 }
-
-import './StockChart.css';
 
 export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
   const { stocks } = useStockContext();
