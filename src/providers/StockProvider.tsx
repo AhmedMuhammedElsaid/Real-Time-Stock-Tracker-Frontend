@@ -69,8 +69,6 @@ export default function StockProvider({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     registerMessageHandler((data: any) => {
-      // Backend definition: type PriceUpdate { symbol, price, timestamp }
-      // Check if it's a price update
       if (data.symbol && data.price) {
         dispatch({ type: 'UPDATE_PRICE', payload: data as PriceUpdate });
       }

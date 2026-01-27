@@ -84,7 +84,8 @@ For future scale-up:
 - **Web Workers**: Move data normalization for large charts to background threads to keep the main thread fluid.
 
 > [!TIP]
-> Check [EnhancementPlan.md](file:///c:/Users/Ahmed%20Elsaid/Downloads/fe-task%20%281%29%20%281%29/fe-task/frontend/EnhancementPlan.md) for a detailed technical breakdown of pending optimizations.
+> Check [EnhancementPlan.md]
+for a detailed technical breakdown of pending optimizations.
 
 ---
 **Author**: Ahmed Muhammed Elsaid  
