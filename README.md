@@ -1,83 +1,84 @@
-# Frontend Engineering Documentation
+# 🚀 StockPulse - Real-Time Market Analysis
 
-## 🛠️ Stack Overview
-
-| Layer | Technology | Version | Rationale |
-|-------|------------|---------|-----------|
-| **Core** | React | 19.x | Concurrent features and robust ecosystem. |
-| **Build** | Vite | 7.x | Instant HMR and efficient bundling. |
-| **Testing** | Vitest | 4.x | Fast, modern test runner with Vite integration. |
-| **RTL Core** | @testing-library/dom | 10.x | Explicitly declared for robust `waitFor` and async type resolution. |
-| **SEO** | react-helmet-async | 2.x | Dynamic header management for titles/meta descriptions. |
-| **Language** | TypeScript | 5.x | Strict type safety for financial data structures. |
-| **Styling** | Vanilla CSS | - | High performance, GPU-accelerated animations using CSS variables. |
-| **Typography** | Inter | - | Premium sans-serif font for professional readability. |
-| **Routing** | React Router | 7.x | Modern SPA routing solution. |
+A high-performance, real-time stock monitoring dashboard built
+ with **React 19**, **Vite**, and **TypeScript**. 
+ This project demonstrates enterprise-grade architecture, "tech lead" level performance optimizations, and a premium design system.
 
 ---
 
-## 📂 Project Architecture
+## 🏗️ Architectural Foundations
 
-The project follows a **Feature-Based Directory Structure** to ensure massive scalability and clear separation of concerns.
+### 🛠️ Technology Stack
+| Layer | Technology | Rationale |
+|-------|------------|-----------|
+| **Core** | React 19 | Leveraging concurrent rendering and the latest transitions. |
+| **Build** | Vite 7 | Lightning-fast HMR and optimized production bundling. |
+| **State** | Context API + useReducer | Robust, native state management for real-time price streams. |
+| **Testing** | Vitest + RTL | Modern, fast test runner with a rich UI for developers. |
+| **SEO** | react-helmet-async | Dynamic metadata management for real-time detail pages. |
+| **Real-time** | WebSockets | Low-latency bi-directional price updates. |
 
+### 📂 Directory Structure
+The project follows a **Feature-Based Module System**, ensuring clarity as the codebase grows.
 ```bash
 src/
-├── api/               # Centralized API service layer
-├── components/        # Global/Common UI components
-│   └── common/        # Generic UI like ErrorBoundary, Skeleton, Header
-├── features/          # Domain-specific logic & components
-│   ├── dashboard/     # Market Overview composition (List, Card)
-│   └── stocks/        # Detailed analysis (Chart, Detail Page)
-├── hooks/             # Custom Global Hooks (useWebSocket)
-├── providers/         # Global State Contexts (StockProvider)
-├── styles/            # Global design tokens and performance-tuned CSS
-├── utils/             # Reusable business logic utilities
-└── types/             # Domain Model Definitions
+├── api/               # Centralized data fetching layer
+├── components/        # Global UI primitives (common/ErrorBoundary, Skeleton, etc.)
+├── features/          # Domain-specific modules (Dashboard, Stocks analysis)
+├── hooks/             # Specialized global hooks (useVirtualGrid, useWebSocket)
+├── providers/         # Global state orchestrators
+├── styles/            # Design system tokens and layout utilities
+├── utils/             # Financial formatting and helper functions
+└── types/             # Strict TypeScript definitions
 ```
 
 ---
 
-## 🔧 Core Engineering Features
+## ⚡ Engineering Key Features
 
-### 1. Dynamic SEO & Meta Management
-- **Page-Specific Metadata**: Uses `react-helmet-async` to dynamically update document titles and meta descriptions (e.g., "AAPL Stock Details").
-- **Social Graph Optimization**: Pre-configured meta tags in `index.html` ensure professional rendering across search engines and social platforms.
+### 1. High-Performance Grid Virtualization
+As a performance-first application, the stock list utilizes a custom **`useVirtualGrid`** implementation. 
+- **Tech Lead Solution**: Instead of heavy external libraries, we use a custom hook to calculate visible items in a responsive grid.
+- **Responsive Dimensions**: Automatically detects column counts and adjusts to window resizing via `ResizeObserver`.
+- **Zero-Lag UX**: Only renders DOM nodes visible in the viewport, maintaining 60fps even with thousands of instruments.
 
-### 2. Premium Design System
-- **Typography & Brand**: Integrated **Inter** font family via Google Fonts for a modern, enterprise-grade aesthetic.
-- **Glassmorphism & Micro-animations**: Components feature subtle hover states, scale transitions, and custom `Bezier` easing.
-- **Perceived Performance**: Implemented a global `Skeleton` loading system to eliminate layout shifts and provide immediate visual feedback.
+### 2. Resilient "Self-Healing" Connectivity
+- **Mount-Aware WebSockets**: Prevents memory leaks and "closed before established" errors by using mounting guards and aggressive listener cleanup.
+- **Exponential Backoff**: Advanced reconnection logic (1s -> 30s) ensures the app remains stable during server-side volatility.
 
-### 3. Resilient Real-Time Connectivity
-- **Self-Healing WebSocket**: Implementation of **Exponential Backoff** (1s -> 30s) to handle backend volatility.
-- **Initial Price Snapshots**: Optimized boot time by fetching current market prices via REST before WebSocket initialization.
+### 3. Premium Design System
+- **Pixel-Perfect UI**: Integrated **Inter** typography and a curated CSS variable system for consistent brand identity.
+- **Smooth Content Transitions**: Standardized `Skeleton` loaders for all async states, eliminating layout shifts (CLS).
+- **CSS Encapsulation**: Refactored from inline styles to a modular CSS architecture for maintainability and performance.
 
-### 4. Precise Chart Stitching
-- **Server-Driven Timing**: Live updates use backend timestamps to prevent drift.
-- **Strict Minute Boundaries**: Data is normalized to provide clean, professional-looking OHLC-style charts.
-
----
-
-## 🧪 Quality Assurance & Automation
-
-### Automated Testing
-The project uses **Vitest** + **React Testing Library** for automated verification.
-
-- **Explicit Dependency Management**: `@testing-library/dom` is explicitly declared to resolve `waitFor` export conflicts common in modern React environments.
-- **Verification Scenarios**:
-    - **Unit Tests**: State transitions in `stockReducer`.
-    - **Integration Tests**: Comprehensive rendering checks for `StockList` and `StockCard`.
+### 4. Enterprise-Grade Error Handling
+- **Scoped Error Boundaries**: Localized error catching ensures a single chart failure doesn't crash the entire dashboard.
+- **Graceful Fallbacks**: Component-specific recovery states for isolated failure points.
 
 ---
 
-## 🔧 Development Scripts
+## 🧪 Quality & Verification
 
-- `npm run dev`: Start dev server with HMR.
-- `npm run build`: Type-check and production build.
-- `npm test`: Run all tests once.
-- `npm run test:ui`: Browser-based test runner UI.
+### Testing Philosophy
+We prioritize **Integration Stability** over simple unit coverage.
+- **Vitest UI**: Full browser integration for test visualization.
+- **Virtualized Test Environment**: Custom mocks for `ResizeObserver` and `useVirtualGrid` dimensions ensure tests pass reliably in headless environments.
+- **Async Robustness**: Explicit `@testing-library/dom` declaration for precise async assertions.
+
+### Available Scripts
+- `npm run dev` — Launch dev server with instant HMR.
+- `npm run build` — Compile, type-check, and optimize for production.
+- `npm test` — Execute all unit and integration tests.
+- `npm run test:ui` — Open the interactive test runner.
 
 ---
 
-## 📈 Author Recommendation
-For enterprise-level scaling, consider moving from Context to **Zustand** for better selector-based rendering performance, and **TanStack Query** for advanced API lifecycle management.
+## 📈 Roadmap & Lead Recommendations
+For future scale-up:
+- **State Partitioning**: Transition complex state to **Zustand** or **Recoil** to optimize selector-based re-renders.
+- **Advanced Caching**: Implement **TanStack Query** for persistent cache management across navigation cycles.
+- **Web Workers**: Move data normalization for large charts to background threads to keep the main thread fluid.
+
+---
+**Author**: Ahmed Muhammed Elsaid  
+**Maintainer**: [AhmedMuhammedElsaid](https://github.com/AhmedMuhammedElsaid)
