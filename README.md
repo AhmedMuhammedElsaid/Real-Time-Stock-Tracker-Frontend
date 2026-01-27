@@ -79,6 +79,7 @@ For future scale-up:
 - **Advanced Caching**: Implement **TanStack Query** for persistent cache management across navigation cycles.
 - **Web Workers**: Move data normalization for large charts to background threads to keep the main thread fluid.
 
+## Check EnhancementPlan.md for more details
 ---
 **Author**: Ahmed Muhammed Elsaid  
 **Maintainer**: [AhmedMuhammedElsaid](https://github.com/AhmedMuhammedElsaid)

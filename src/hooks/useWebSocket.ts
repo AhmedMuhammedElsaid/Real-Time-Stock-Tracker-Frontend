@@ -4,6 +4,8 @@ import type { ConnectionStatus } from '../types';
 const WS_URL = 'ws://localhost:3000/realtime-prices-ws';
 const INITIAL_RECONNECT_INTERVAL = 1000;
 const MAX_RECONNECT_INTERVAL = 30000;
+const HEARTBEAT_INTERVAL = 30000;
+const HEARTBEAT_TIMEOUT = 5000;
 
 export function useWebSocket() {
   const [status, setStatus] = useState<ConnectionStatus>('disconnected');
@@ -12,6 +14,27 @@ export function useWebSocket() {
   const isComponentMounted = useRef(true);
   const reconnectCount = useRef(0);
   const subscriptions = useRef<Set<string>>(new Set());
+  const heartbeatTimer = useRef<any>(null);
+  const timeoutTimer = useRef<any>(null);
+
+  const stopHeartbeat = useCallback(() => {
+    if (heartbeatTimer.current) clearInterval(heartbeatTimer.current);
+    if (timeoutTimer.current) clearTimeout(timeoutTimer.current);
+  }, []);
+
+  const startHeartbeat = useCallback(() => {
+    stopHeartbeat();
+    heartbeatTimer.current = setInterval(() => {
+      if (ws.current?.readyState === WebSocket.OPEN) {
+        ws.current.send(JSON.stringify({ action: 'ping' }));
+        
+        timeoutTimer.current = setTimeout(() => {
+          console.warn('WebSocket heartbeat timeout, reconnecting...');
+          ws.current?.close();
+        }, HEARTBEAT_TIMEOUT);
+      }
+    }, HEARTBEAT_INTERVAL);
+  }, [stopHeartbeat]);
 
   const connect = useCallback(() => {
     if (ws.current?.readyState === WebSocket.OPEN || ws.current?.readyState === WebSocket.CONNECTING) return;
@@ -36,12 +59,15 @@ export function useWebSocket() {
         socket.send(JSON.stringify({ action: 'subscribe', symbols }));
         console.log('Recovered subscriptions:', symbols);
       }
+
+      startHeartbeat();
     };
 
     socket.onclose = () => {
       if (!isComponentMounted.current) return;
 
       setStatus('disconnected');
+      stopHeartbeat();
       const delay = Math.min(
         INITIAL_RECONNECT_INTERVAL * Math.pow(2, reconnectCount.current),
         MAX_RECONNECT_INTERVAL
@@ -65,6 +91,12 @@ export function useWebSocket() {
       if (!isComponentMounted.current) return;
       try {
         const data = JSON.parse(event.data);
+        
+        if (data.action === 'pong') {
+          if (timeoutTimer.current) clearTimeout(timeoutTimer.current);
+          return;
+        }
+
         if (messageHandler.current) {
           messageHandler.current(data);
         }
@@ -79,6 +111,7 @@ export function useWebSocket() {
     connect();
     return () => {
       isComponentMounted.current = false;
+      stopHeartbeat();
       if (ws.current) {
         // Clear listeners to prevent logs during unmount closure
         ws.current.onopen = null;

@@ -18,7 +18,7 @@ export const StockCard: React.FC<StockCardProps> = React.memo(({ stock, onClick 
     } else if (stock.price < prevPrice.current) {
       setFlashClass('flash-down');
     }
-    
+
     const timer = setTimeout(() => {
       setFlashClass('');
     }, 1000);
@@ -48,9 +48,9 @@ export const StockCard: React.FC<StockCardProps> = React.memo(({ stock, onClick 
         <div className="stock-symbol">{stock.symbol}</div>
         <div className="stock-name">{stock.name}</div>
       </div>
-      <div className="stock-price">
+      <p aria-live="polite" className="stock-price">
         ${stock.price.toFixed(2)}
-      </div>
+      </p>
     </button>
   );
 });
