@@ -44,15 +44,18 @@ As a performance-first application, the stock list utilizes a custom **`useVirtu
 
 ### 2. Resilient "Self-Healing" Connectivity
 - **Mount-Aware WebSockets**: Prevents memory leaks and "closed before established" errors by using mounting guards and aggressive listener cleanup.
+- **WebSocket Heartbeat**: Real-time **Ping/Pong** mechanism (30s interval) detects "zombie" connections and forces automatic recovery to ensure price parity.
 - **Exponential Backoff**: Advanced reconnection logic (1s -> 30s) ensures the app remains stable during server-side volatility.
 
-### 3. Premium Design System
+### 3. Premium Design System & UX
 - **Pixel-Perfect UI**: Integrated **Inter** typography and a curated CSS variable system for consistent brand identity.
+- **Live Visual Feedback**: High-performance CSS micro-animations flash green/red on price updates to signal market movement.
+- **Soft Retry Pattern**: Custom `ReloadButton` logic refetches data-on-demand without full page reloads, preserving application state and scroll position.
 - **Smooth Content Transitions**: Standardized `Skeleton` loaders for all async states, eliminating layout shifts (CLS).
-- **CSS Encapsulation**: Refactored from inline styles to a modular CSS architecture for maintainability and performance.
 
-### 4. Enterprise-Grade Error Handling
+### 4. Enterprise-Grade Error Handling & a11y
 - **Scoped Error Boundaries**: Localized error catching ensures a single chart failure doesn't crash the entire dashboard.
+- **Accessibility (a11y)**: Implemented `aria-live="polite"` on real-time price feeds for screen-reader compliance.
 - **Graceful Fallbacks**: Component-specific recovery states for isolated failure points.
 
 ---
@@ -61,6 +64,7 @@ As a performance-first application, the stock list utilizes a custom **`useVirtu
 
 ### Testing Philosophy
 We prioritize **Integration Stability** over simple unit coverage.
+- **Typed Configuration**: Strategic use of `vitest/config` for a strictly typed test environment.
 - **Vitest UI**: Full browser integration for test visualization.
 - **Virtualized Test Environment**: Custom mocks for `ResizeObserver` and `useVirtualGrid` dimensions ensure tests pass reliably in headless environments.
 - **Async Robustness**: Explicit `@testing-library/dom` declaration for precise async assertions.
@@ -79,7 +83,9 @@ For future scale-up:
 - **Advanced Caching**: Implement **TanStack Query** for persistent cache management across navigation cycles.
 - **Web Workers**: Move data normalization for large charts to background threads to keep the main thread fluid.
 
-## Check EnhancementPlan.md for more details
+> [!TIP]
+> Check [EnhancementPlan.md](file:///c:/Users/Ahmed%20Elsaid/Downloads/fe-task%20%281%29%20%281%29/fe-task/frontend/EnhancementPlan.md) for a detailed technical breakdown of pending optimizations.
+
 ---
 **Author**: Ahmed Muhammed Elsaid  
 **Maintainer**: [AhmedMuhammedElsaid](https://github.com/AhmedMuhammedElsaid)
