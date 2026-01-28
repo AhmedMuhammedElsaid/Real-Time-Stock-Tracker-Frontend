@@ -58,6 +58,10 @@ As a performance-first application, the stock list utilizes a custom **`useVirtu
 - **Accessibility (a11y)**: Implemented `aria-live="polite"` on real-time price feeds for screen-reader compliance.
 - **Graceful Fallbacks**: Component-specific recovery states for isolated failure points.
 
+### 5. Advanced Bundle Optimization
+- **Smart Code Splitting**: configured Vite `manualChunks` to surgically separate vendor libraries (React, Recharts, Lucide) from application logic, maximizing cache hit rates.
+- **Route-Based Lazy Loading**: Dashboard and StockDetail pages are lazily loaded, reducing the initial bundle size for faster First Contentful Paint (FCP).
+
 ---
 
 ## 🧪 Quality & Verification
