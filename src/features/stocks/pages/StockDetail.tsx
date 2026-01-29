@@ -23,7 +23,7 @@ export default function StockDetail() {
         unsubscribe([symbol]);
       };
     }
-  }, [symbol]);
+  }, [symbol, subscribe, unsubscribe]);
 
   if (!stock) {
     return (

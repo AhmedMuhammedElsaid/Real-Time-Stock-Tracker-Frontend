@@ -8,8 +8,8 @@ vi.mock('lucide-react', () => ({
 }));
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => children,
-  AreaChart: ({ children }: any) => children,
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => children,
+  AreaChart: ({ children }: { children: React.ReactNode }) => children,
   Area: () => null,
   XAxis: () => null,
   YAxis: () => null,

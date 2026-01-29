@@ -1,55 +1,7 @@
 import React, { createContext, useContext, useEffect, useReducer, useCallback } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
-import type { ConnectionStatus, Stock, PriceUpdate } from '../types';
-
-export interface StockState {
-  stocks: Record<string, Stock>;
-  connectionStatus: ConnectionStatus;
-}
-
-export type Action = 
-  | { type: 'UPDATE_PRICE'; payload: PriceUpdate }
-  | { type: 'SET_STOCKS'; payload: Stock[] } // If we fetch initial list
-  | { type: 'SET_CONNECTION_STATUS'; payload: ConnectionStatus };
-
-export const initialState: StockState = {
-  stocks: {},
-  connectionStatus: 'disconnected',
-};
-
-export function stockReducer(state: StockState, action: Action): StockState {
-  switch (action.type) {
-    case 'UPDATE_PRICE': {
-      const { symbol, price, timestamp } = action.payload;
-      const currentStock = state.stocks[symbol];
-      if (!currentStock) return state;
-
-      return {
-        ...state,
-        stocks: {
-          ...state.stocks,
-          [symbol]: { ...currentStock, price, lastUpdated: timestamp },
-        },
-      };
-    }
-    case 'SET_CONNECTION_STATUS':
-      return { ...state, connectionStatus: action.payload };
-    case 'SET_STOCKS':
-      const newStocks = action.payload.reduce((acc, stock) => {
-        const existingStock = state.stocks[stock.symbol];
-        acc[stock.symbol] = {
-          ...stock,
-          // Preserve price and lastUpdated if they exist and the new stock has price 0
-          price: (stock.price === 0 && existingStock?.price !== undefined) ? existingStock.price : stock.price,
-          lastUpdated: existingStock?.lastUpdated || stock.lastUpdated,
-        };
-        return acc;
-      }, {} as Record<string, Stock>);
-      return { ...state, stocks: { ...state.stocks, ...newStocks } }; // Merge to preserve prices if any
-    default:
-      return state;
-  }
-}
+import type { Stock, PriceUpdate } from '../types';
+import { stockReducer, initialState, type StockState } from './StockReducer';
 
 interface StockContextType extends StockState {
   subscribe: (symbols: string[]) => void;
@@ -68,20 +20,21 @@ export default function StockProvider({ children }: { children: React.ReactNode 
   }, [status]);
 
   useEffect(() => {
-    registerMessageHandler((data: any) => {
-      if (data.symbol && data.price) {
-        dispatch({ type: 'UPDATE_PRICE', payload: data as PriceUpdate });
+    registerMessageHandler((data: unknown) => {
+      const update = data as PriceUpdate;
+      if (update.symbol && update.price) {
+        dispatch({ type: 'UPDATE_PRICE', payload: update });
       }
     });
   }, [registerMessageHandler]);
 
   const subscribe = useCallback((symbols: string[]) => {
     send({ action: 'subscribe', symbols });
-  }, [send]);
+  }, []);
 
   const unsubscribe = useCallback((symbols: string[]) => {
     send({ action: 'unsubscribe', symbols });
-  }, [send]);
+  }, []);
 
   const setInitialStocks = useCallback((stocks: Stock[]) => {
     dispatch({ type: 'SET_STOCKS', payload: stocks });

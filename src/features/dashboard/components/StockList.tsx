@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useStockContext } from '../../../providers/StockProvider';
 import { fetchStockList } from '../../../api/api';
 import { StockCard } from './StockCard';
@@ -24,30 +24,35 @@ export const StockList: React.FC = () => {
     buffer: 4
   });
 
+  const initialLoadRef = useRef(false);
   const loadStocks = useCallback(async () => {
+    if (initialLoadRef.current) return;
+    
     const hasStocks = Object.keys(stocks).length > 0;
     
-    setError(null);
-    if (!hasStocks) {
-      setLoading(true);
-    }
+    // We only need to set these if it's a re-load/retry after error
+    // Initial values are already correct
+    if (error) setError(null);
+    if (!hasStocks && !loading) setLoading(true);
 
     try {
       const list = await fetchStockList();
       setInitialStocks(list);
       subscribe(list.map(s => s.symbol));
       setLoading(false);
-    } catch (err) {
+      initialLoadRef.current = true;
+    } catch {
       if (!hasStocks) {
         setError('Failed to load stocks. Please ensure backend is running.');
         setLoading(false);
       }
     }
-  }, [stocks]);
+  }, [setInitialStocks, subscribe, stocks, error, loading]);
 
   useEffect(() => {
     loadStocks();
-  }, [loadStocks]);
+  }, [loadStocks]); // Include loadStocks in dependencies
+
 
   const handleStockClick = (symbol: string) => navigate(`/stocks/${symbol}`);
 

@@ -26,17 +26,17 @@ export const StockCard: React.FC<StockCardProps> = React.memo(({ stock, onClick 
     prevPrice.current = stock.price;
 
     return () => clearTimeout(timer);
-  }, [stock.price]);
+  }, [stock.price,]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       onClick(stock.symbol);
     }
-  }, [stock.symbol])
+  }, [stock.symbol, onClick])
 
   const handleOnClick = useCallback(() => {
     onClick(stock.symbol);
-  }, [stock.symbol])
+  }, [stock.symbol, onClick])
 
   return (
     <button

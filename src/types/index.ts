@@ -28,3 +28,10 @@ export interface HistoricalDataResponse {
 }
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
+
+export interface CustomChartData {
+  time: number;
+  displayTime: string;
+  price: number;
+}
+

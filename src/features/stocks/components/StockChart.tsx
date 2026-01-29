@@ -6,21 +6,19 @@ import ErrorBoundary  from '../../../components/common/ErrorBoundary/ErrorBounda
 import { getTime } from '../../../utils/utils';
 import { Skeleton } from '../../../components/common/Skeleton';
 import Fallback from '../../../components/common/Fallback/Fallback';
+import { type CustomChartData } from '../../../types';
+import CustomTooltip from './CustomTooltip';
 import '../styles/StockChart.css';
 
 interface StockChartProps {
   symbol: string;
 }
 
-interface ChartData {
-  time: number;
-  displayTime: string;
-  price: number;
-}
+
 
 export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
   const { stocks } = useStockContext();
-  const [history, setHistory] = useState<ChartData[]>([]);
+  const [history, setHistory] = useState<CustomChartData[]>([]);
   const [loading, setLoading] = useState(true);
 
   const stock = stocks[symbol];
@@ -54,7 +52,7 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
 
     const lastHistoryPoint = history[history.length - 1];
 
-    const livePoint: ChartData = {
+    const livePoint: CustomChartData = {
       time: currentMinuteTime,
       displayTime: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       price: currentPrice
@@ -76,22 +74,6 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
       </div>
     );
   }
-
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="custom-tooltip">
-          <p className="tooltip-time">
-            {payload[0].payload.displayTime}
-          </p>
-          <p className="tooltip-price">
-            ${payload[0].value.toFixed(2)}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="chart-outer-container">
@@ -124,7 +106,7 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
               tick={{ fill: 'var(--text-muted)', fontSize: 12, fontWeight: 500 }}
               tickFormatter={(val) => `$${val.toFixed(0)}`}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={CustomTooltip} cursor={{ stroke: 'var(--primary)', strokeWidth: 2 }} />
             <Area
               type="monotone"
               dataKey="price"

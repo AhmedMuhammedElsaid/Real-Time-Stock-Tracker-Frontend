@@ -14,8 +14,8 @@ export function useWebSocket() {
   const isComponentMounted = useRef(true);
   const reconnectCount = useRef(0);
   const subscriptions = useRef<Set<string>>(new Set());
-  const heartbeatTimer = useRef<any>(null);
-  const timeoutTimer = useRef<any>(null);
+  const heartbeatTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timeoutTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const stopHeartbeat = useCallback(() => {
     if (heartbeatTimer.current) clearInterval(heartbeatTimer.current);
@@ -53,7 +53,6 @@ export function useWebSocket() {
       reconnectCount.current = 0;
       console.log('WebSocket Connected');
       
-      // Recover subscriptions
       if (subscriptions.current.size > 0) {
         const symbols = Array.from(subscriptions.current);
         socket.send(JSON.stringify({ action: 'subscribe', symbols }));
@@ -104,7 +103,7 @@ export function useWebSocket() {
         console.error('Failed to parse WS message', e);
       }
     };
-  }, []);
+  }, [startHeartbeat, stopHeartbeat]); // Added dependencies
 
   useEffect(() => {
     isComponentMounted.current = true;
@@ -113,7 +112,6 @@ export function useWebSocket() {
       isComponentMounted.current = false;
       stopHeartbeat();
       if (ws.current) {
-        // Clear listeners to prevent logs during unmount closure
         ws.current.onopen = null;
         ws.current.onclose = null;
         ws.current.onerror = null;
@@ -121,24 +119,23 @@ export function useWebSocket() {
         ws.current.close();
       }
     };
-  }, [connect]);
+  }, [connect, stopHeartbeat]); // Added stopHeartbeat
 
-  const send = useCallback((data: any) => {
-    // Track subscriptions for recovery
-    if (data.action === 'subscribe') {
+  const send = useCallback((data: { action: string; symbols?: string[] }) => {
+    if (data.action === 'subscribe' && data.symbols) {
       data.symbols.forEach((s: string) => subscriptions.current.add(s));
-    } else if (data.action === 'unsubscribe') {
+    } else if (data.action === 'unsubscribe' && data.symbols) {
       data.symbols.forEach((s: string) => subscriptions.current.delete(s));
     }
 
     if (ws.current?.readyState === WebSocket.OPEN) {
       ws.current.send(JSON.stringify(data));
     } else {
-      console.warn('WebSocket not connected, subscription buffered:', data);
+      console.warn('WebSocket not connected, action buffered:', data);
     }
   }, []);
 
-  const registerMessageHandler = useCallback((handler: (data: any) => void) => {
+  const registerMessageHandler = useCallback((handler: (data: unknown) => void) => {
     messageHandler.current = handler;
   }, []);
 
