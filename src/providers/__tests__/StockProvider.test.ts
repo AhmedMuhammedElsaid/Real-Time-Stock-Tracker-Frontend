@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { stockReducer, initialState } from '../StockProvider';
-import type { StockState } from '../StockProvider';
+import { initialState, stockReducer, type StockState } from '../StockReducer';
 
 describe('stockReducer', () => {
   it('should handle SET_STOCKS with initial prices', () => {

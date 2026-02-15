@@ -1,4 +1,3 @@
-import React from 'react';
 import type { TooltipProps } from 'recharts';
 import type { CustomChartData } from '../../../types';
 
@@ -6,8 +5,9 @@ import type { CustomChartData } from '../../../types';
 // Defining them here for maximum compatibility with Vite's import analysis.
 type ValueType = number | string | Array<number | string>;
 type NameType = number | string;
-
-const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({ active, payload }) => {
+const CustomTooltip = (props: TooltipProps<ValueType, NameType>) => {
+  // @ts-ignore
+  const { active, payload } = props;
   if (active && payload && payload.length) {
     const data = payload[0].payload as CustomChartData;
     const value = payload[0].value;
@@ -18,8 +18,8 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({ active, pa
           {data.displayTime}
         </p>
         <p className="tooltip-price">
-          ${typeof value === 'number' 
-            ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) 
+          ${typeof value === 'number'
+            ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
             : value}
         </p>
       </div>

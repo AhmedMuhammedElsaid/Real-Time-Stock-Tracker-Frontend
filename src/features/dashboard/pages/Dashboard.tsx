@@ -1,3 +1,4 @@
+import React from 'react';
 import { StockList } from '../components/StockList';
 import { Helmet } from 'react-helmet-async';
 import { Header } from '../../../components/common/Header/Header';
