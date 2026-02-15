@@ -1,8 +1,7 @@
 import type { StockListItem, HistoricalDataResponse } from '../types';
 
-// should be stored in .env and read it from there
-// const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || `${window.location.origin}/api`;
 
 export async function fetchStockList(): Promise<StockListItem[]> {
   const response = await fetch(`${API_BASE_URL}/stocks`);
