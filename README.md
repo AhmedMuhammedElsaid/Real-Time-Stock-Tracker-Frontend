@@ -11,7 +11,7 @@ A high-performance, real-time stock monitoring dashboard built
 ### 🛠️ Technology Stack
 | Layer | Technology | Rationale |
 |-------|------------|-----------|
-| **Core** | React 19 | Leveraging concurrent rendering and the latest transitions. |
+| **Core** | React 18.3 | Leveraging concurrent rendering and the latest transitions. |
 | **Build** | Vite 7 | Lightning-fast HMR and optimized production bundling. |
 | **State** | Context API + useReducer | Robust, native state management for real-time price streams. |
 | **Testing** | Vitest + RTL | Modern, fast test runner with a rich UI for developers. |
